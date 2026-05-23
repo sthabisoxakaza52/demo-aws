@@ -1,0 +1,35 @@
+Based on your app's core mission to help entrepreneurs gain traction, market products, secure funding, and network strategically, here is a structured list of software functional requirements.
+
+---
+
+## 1. AI Recommendation Engine (Events & Networking)
+
+* **Contextual Networking Matches:** The system **must** analyze user profiles (skills, business stage, industry) to recommend relevant professionals, mentors, and prospective employers.
+* **Smart Event Suggestions:** The system **must** cross-reference the entrepreneur's product niche and location to recommend high-value business events, pitches, and conferences.
+* **Warm Introduction Automation:** The system **must** provide optimized outreach templates tailored to the specific reason for the connection (e.g., seeking investment, partnership, or employment).
+
+## 2. LinkedIn Scraping & Opportunity Integration
+
+* **Targeted Keyword Scraping:** The system **must** periodically scrape LinkedIn for job openings, requests for proposals (RFPs), and business opportunities that match the user’s portfolio and industry tags.
+* **Lead Deduping & Scoring:** The system **must** filter out duplicate listings and score opportunities based on how closely they align with the entrepreneur’s stated business goals.
+* **External Profile Syncing:** The system **must** allow users to pull relevant public data from their own LinkedIn profiles to fast-track their app portfolio setup.
+
+## 3. Funding & Proposal Builder
+
+* **Grant & Investor Aggregator:** The system **must** maintain a searchable database of active funding opportunities, venture capital firms, and government grants.
+* **AI-Assisted Pitch/Proposal Generator:** The system **must** generate structured business proposals, grant applications, and investor pitch decks based on the user's business metrics and traction data.
+* **Traction Milestone Tracker:** The system **must** allow users to input and visualize key performance indicators (KPIs) like user growth, revenue, or milestones to showcase to potential funders.
+
+## 4. Product Marketing & Portfolio Management
+
+* **Digital B2B Showroom:** The system **must** allow entrepreneurs to host a public-facing digital portfolio or product catalog to showcase their offerings to prospective clients and employers.
+* **Traction Proof Badging:** The system **must** verify and display specific business achievements (e.g., "Seed Stage Completed", "1k+ Users reached") on the user’s portfolio.
+
+## 5. User Management & Onboarding
+
+* **Role-Based Profiles:** The system **must** support distinct onboarding flows for **Entrepreneurs** (looking for growth/funding) and **Partners/Investors/Employers** (looking to fund or hire).
+* **Preference Center:** The system **must** allow users to explicitly toggle what they are currently looking for (e.g., *“Looking for co-founders,” “Seeking seed funding,” “Open to contract work”*).
+
+---
+
+Would you like to deep-dive into the technical stack or architecture needed to build the LinkedIn scraping and AI recommendation pieces safely?
