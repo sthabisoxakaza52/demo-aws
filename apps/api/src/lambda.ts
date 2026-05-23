@@ -4,24 +4,12 @@
  * by API Gateway (HTTP API proxy integration).
  */
 import awsLambdaFastify from "@fastify/aws-lambda";
-import type { APIGatewayProxyEventV2, Context } from "aws-lambda";
 import { buildApp } from "./server.js";
 
-// Cache the proxy across warm Lambda invocations
-let proxy: ReturnType<typeof awsLambdaFastify> | null = null;
+const app = await buildApp();
 
-const getProxy = async () => {
-  if (!proxy) {
-    const app = await buildApp();
-    proxy = awsLambdaFastify(app);
-  }
-  return proxy;
-};
-
-export const handler = async (
-  event: APIGatewayProxyEventV2,
-  context: Context
-) => {
-  const p = await getProxy();
-  return p(event, context);
-};
+/**
+ * Export the proxy directly as the Lambda handler.
+ * @fastify/aws-lambda handles caching internally across warm invocations.
+ */
+export const handler = awsLambdaFastify(app);
