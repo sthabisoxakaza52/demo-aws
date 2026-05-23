@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: EntrepreneurOS — API Lambda + API Gateway + Cognito
+
+Globals:
+  Function:
+    Runtime: nodejs22.x
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        NODE_ENV: production
+        AWS_REGION: !Ref AWS::Region
+        COGNITO_USER_POOL_ID: !Ref UserPool
+        DATABASE_URL: !Sub "{{resolve:ssm:/entrepreneuros/DATABASE_URL}}"
+        OPENAI_API_KEY: !Sub "{{resolve:ssm:/entrepreneuros/OPENAI_API_KEY}}"
+        FRONTEND_URL: !Sub "{{resolve:ssm:/entrepreneuros/FRONTEND_URL}}"
+
+Resources:
+  # ── Cognito User Pool ──────────────────────────────────────────────────────
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: EntrepreneurOSUserPool
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+      Schema:
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: role
+          AttributeDataType: String
+          Mutable: true
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: EntrepreneurOSWebClient
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      PreventUserExistenceErrors: ENABLED
+
+  # Entrepreneur group
+  EntrepreneurGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: entrepreneur
+      UserPoolId: !Ref UserPool
+
+  # Partner/Investor/Employer group
+  PartnerGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: partner
+      UserPoolId: !Ref UserPool
+
+  # ── API Lambda ─────────────────────────────────────────────────────────────
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: entrepreneuros-api
+      CodeUri: ../apps/api/dist/
+      Handler: lambda.handler
+      Description: EntrepreneurOS Fastify API
+      Events:
+        ApiGateway:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /{proxy+}
+            Method: ANY
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: "entrepreneuros/*"
+
+  # ── HTTP API Gateway ───────────────────────────────────────────────────────
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: prod
+      CorsConfiguration:
+        AllowOrigins:
+          - !Sub "{{resolve:ssm:/entrepreneuros/FRONTEND_URL}}"
+        AllowHeaders:
+          - Authorization
+          - Content-Type
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref UserPool
+
+  UserPoolClientId:
+    Description: Cognito User Pool Client ID
+    Value: !Ref UserPoolClient

@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Turbo cache
+.turbo/
+
+# AWS SAM build artifacts
+.aws-sam/
+samconfig.toml
